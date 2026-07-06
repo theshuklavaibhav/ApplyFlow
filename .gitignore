@@ -1,0 +1,34 @@
+# ======================
+# Flutter
+# ======================
+frontend/applyflow/build/
+frontend/applyflow/.dart_tool/
+frontend/applyflow/.packages
+frontend/applyflow/.flutter-plugins
+frontend/applyflow/.flutter-plugins-dependencies
+
+# ======================
+# Python
+# ======================
+backend/venv
+backend/.venv
+backend/__pycache__
+backend/.pytest_cache
+
+# Flutter
+Frontend/applyflow/build/
+Frontend/applyflow/.dart_tool/
+
+# Android build artifacts
+Frontend/applyflow/android/build/
+
+# Environment Variables
+backend/.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
