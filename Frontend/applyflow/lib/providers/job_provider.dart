@@ -48,6 +48,16 @@ class JobProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateJob(String id, JobApplication job) async {
+    final updated = await _jobService.updateJob(id, job);
+    final index = _jobsList.indexWhere((j) => j.id == id);
+    if (index != -1) {
+      _jobsList[index] = updated;
+      notifyListeners();
+    }
+  }
+
+
   Future<void> deleteJob(String id) async {
     await _jobService.deleteApplication(id);
     _jobsList.removeWhere((j) => j.id == id);

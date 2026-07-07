@@ -184,7 +184,7 @@ class _JobListScreenState extends State<JobListScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => AddEditJobScreen(
-                              // existingJob: job
+                              exisitingJob: job
                             ),
                           ),
                         ),

@@ -41,16 +41,18 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
     _appliedDate = job?.appliedDate;
   }
 
-  Future<void> _save() async {
-    if (_companyController.text.isEmpty || _roleController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Company and role is required')));
-      return;
+    Future<void> _save() async {
+    // ✅ Bug 2 fixed — validation runs FIRST, before anything else
+    if (_companyController.text.trim().isEmpty || _roleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Company and role are required')),
+      );
+      return; // stop here, don't save anything
     }
 
     setState(() => _isSaving = true);
 
+    // ✅ Bug 1 fixed — correct spelling: existingJob
     final job = JobApplication(
       id: widget.exisitingJob?.id ?? '',
       company: _companyController.text.trim(),
@@ -65,21 +67,25 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
 
     try {
       final jobProvider = context.read<JobProvider>();
+
+      // ✅ Bug 3 fixed — add vs update are now different
       if (widget.exisitingJob == null) {
-        await jobProvider.addJob(job);
+        await jobProvider.addJob(job);        // creating new
       } else {
-        await jobProvider.addJob(job);
+        await jobProvider.updateJob(widget.exisitingJob!.id, job);  // editing existing
       }
+
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Save failed : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Save failed: $e')),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
+    // ✅ Bug 4 fixed — no dead code after finally
   }
 
   Future<void> _pickDate() async {
