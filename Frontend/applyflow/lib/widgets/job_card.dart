@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/job_application.dart';
+import '../providers/job_provider.dart';
 import '../utils/constants.dart';
 import 'status_chip.dart';
 
@@ -13,6 +15,7 @@ class JobCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = AppColors.statusColor(job.status) ; 
+    final jobProvider = context.watch<JobProvider>() ;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -59,7 +62,14 @@ class JobCard extends StatelessWidget {
                         Icon(Icons.calendar_today_outlined , size: 11, color: AppColors.textMuted,),
                         const SizedBox(width: 4,),
                         Text(job.appliedDate != null ? 'Applied ${DateFormat('MMM d').format(job.appliedDate!)}' : 'No date set',),
+                        const SizedBox(width: 200) ,
+                        IconButton(
+                          onPressed: (){
+                            jobProvider.deleteJob(job.id) ; 
+                          } ,
+                          icon: Icon(Icons.delete_forever),
                         
+                        )
                       ],
                     )
                   ],
