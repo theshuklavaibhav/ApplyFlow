@@ -37,7 +37,7 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
     _locationController = TextEditingController(text: job?.location ?? '');
     _jobUrlController = TextEditingController(text: job?.jobUrl ?? '');
     _notesController = TextEditingController(text: job?.notes ?? '');
-    _status = job?.status ?? '';
+    _status = job?.status ?? 'WISHLIST';
     _appliedDate = job?.appliedDate;
   }
 
@@ -93,9 +93,9 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
       context: context,
       initialDate: _appliedDate ?? DateTime.now(),
       firstDate: DateTime(2024),
-      lastDate: DateTime(2026),
+      lastDate: DateTime.now(),
     );
-    picked ?? setState(() => _appliedDate = picked);
+    if(picked != null) setState(()=> _appliedDate = picked);
   }
 
   Widget _label(String text) {
@@ -246,7 +246,7 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
                               Text(
                                 _appliedDate != null
                                     ? DateFormat(
-                                        'dd,mmm,yyyy',
+                                        'dd MMM yyyy',
                                       ).format(_appliedDate!)
                                     : 'Select date',
                                 style: TextStyle(
