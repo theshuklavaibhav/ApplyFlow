@@ -28,7 +28,7 @@ class _AddEditJobScreenState extends State<AddEditJobScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
 
     final JobApplication? job = widget.exisitingJob;

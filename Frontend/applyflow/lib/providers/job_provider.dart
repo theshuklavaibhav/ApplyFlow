@@ -1,4 +1,3 @@
-import 'package:provider/provider.dart';
 import '../models/job_application.dart';
 import '../services/job_services.dart';
 import 'package:flutter/material.dart';

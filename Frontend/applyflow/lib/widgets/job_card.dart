@@ -62,13 +62,18 @@ class JobCard extends StatelessWidget {
                         Icon(Icons.calendar_today_outlined , size: 11, color: AppColors.textMuted,),
                         const SizedBox(width: 4,),
                         Text(job.appliedDate != null ? 'Applied ${DateFormat('MMM d').format(job.appliedDate!)}' : 'No date set',),
-                        const SizedBox(width: 200) ,
-                        IconButton(
-                          onPressed: (){
-                            jobProvider.deleteJob(job.id) ; 
-                          } ,
-                          icon: Icon(Icons.delete_forever),
-                        
+                        Expanded(
+                          child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  onPressed: (){
+                                      jobProvider.deleteJob(job.id) ; 
+                                  } ,
+                                  icon: Icon(Icons.delete_forever),
+                                )
+                              ],
+                          )
                         )
                       ],
                     )
