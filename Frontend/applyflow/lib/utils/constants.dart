@@ -28,7 +28,10 @@ class AppColors {
 
 class ApiConfig {
   // Change this to your deployed Railway URL once live
-  static const baseUrl = 'http://10.0.2.2:8000/api/v1';
+  static const String baseUrl = "https://applyflow-production-2694.up.railway.app/api/v1";
+
+// const String baseUrl = "http://10.0.2.2:8000/api/v1";
+  // static const baseUrl = 'http://10.0.2.2:8000/api/v1';
   // 10.0.2.2 is how Android emulator reaches your laptop's localhost.
   // On a physical phone on the same WiFi, use your laptop's local IP instead, e.g. 192.168.1.5
   // Once deployed: static const baseUrl = 'https://your-app.up.railway.app/api/v1';
