@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 import uuid
 from datetime import date
@@ -29,12 +29,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 # ── Pydantic Schemas (request/response shapes) ──────────────────
 
 class RegisterRequest(BaseModel):
-    email: str
+    # email: str
+    email: EmailStr
     full_name: str
     password: str
 
 class LoginRequest(BaseModel):
-    email: str
+    # email: str
+    email: EmailStr
     password: str
 
 class JobCreateRequest(BaseModel):

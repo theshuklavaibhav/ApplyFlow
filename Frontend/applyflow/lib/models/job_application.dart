@@ -33,8 +33,8 @@ class JobApplication {
       jobUrl: json['job_url'],
       notes: json['notes'],
       location: json['location'],
-      appliedDate: json['date_applied'] != null
-          ? DateTime.parse(json['date_applied'])
+      appliedDate: json['applied_date'] != null
+          ? DateTime.parse(json['applied_date'])
           : null,
       createdAt: DateTime.parse(json['created_at']),
     );
