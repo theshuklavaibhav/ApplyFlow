@@ -1,51 +1,49 @@
 import 'dart:convert';
-import 'api_service.dart';
 import '../models/job_application.dart';
+import 'api_service.dart';
 
-class JobServices {
-  final _apiService = ApiService();
-  //--------------------GetJob()---------------------------|
+class JobService {
+  final ApiService _api = ApiService();
+
   Future<List<JobApplication>> getJobs({String? statusFilter}) async {
     String endpoint = '/jobs';
     if (statusFilter != null && statusFilter != 'All') {
-      endpoint += statusFilter;
+      endpoint += '?status=$statusFilter';
     }
-    final response = await _apiService.get(endpoint);
+    final response = await _api.get(endpoint);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final List jobsJson =
-          data['data']; // matches your paginated response shape
-      return jobsJson.map((j) => JobApplication.fromJsontoDartObj(j)).toList();
+      // Handle both paginated {data:[]} and bare [] responses
+      final List jobsJson = data is List ? data : (data['data'] ?? []);
+      return jobsJson.map((j) => JobApplication.fromJson(j)).toList();
     } else {
-      throw Exception("Failed to load Job Applications");
+      throw Exception('Failed to load jobs');
     }
   }
 
-  //--------------------CreateJob()---------------------------|
-  Future<JobApplication> createJob(JobApplication jobApplication) async {
-    final response = await _apiService.post('/jobs', jobApplication.toJson());
+  Future<JobApplication> createJob(JobApplication job) async {
+    final response = await _api.post('/jobs', job.toJson());
     if (response.statusCode == 201) {
-      return JobApplication.fromJsontoDartObj(jsonDecode(response.body));
+      return JobApplication.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception("Failed to create job application");
+      final body = jsonDecode(response.body);
+      throw Exception(body['detail'] ?? 'Failed to create job');
     }
   }
 
-  //--------------------UpdateJob()---------------------------|
   Future<JobApplication> updateJob(String id, JobApplication job) async {
-    final response = await _apiService.put('/jobs/$id', job.toJson());
+    final response = await _api.put('/jobs/$id', job.toJson());
     if (response.statusCode == 200) {
-      return JobApplication.fromJsontoDartObj(jsonDecode(response.body));
+      return JobApplication.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to update application');
+      throw Exception('Failed to update job');
     }
   }
 
-  //--------------------DeleteJob()---------------------------|
-  Future<void> deleteApplication(String id) async {
-    final response = await _apiService.delete('/jobs/$id');
-    if (response.statusCode != 204) {
-      throw Exception('Failed to delete application'); 
+  Future<void> deleteJob(String id) async {
+    final response = await _api.delete('/jobs/$id');
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception('Failed to delete job');
     }
   }
 }

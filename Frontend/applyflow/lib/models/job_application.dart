@@ -2,15 +2,13 @@ class JobApplication {
   final String id;
   final String company;
   final String roleTitle;
-  final String status; // WISHLIST | APPLIED | INTERVIEW | REJECTED
+  final String status;
   final String? jobUrl;
   final String? notes;
   final String? location;
-
   final DateTime? appliedDate;
   final DateTime createdAt;
 
-  // Constructor
   JobApplication({
     required this.id,
     required this.company,
@@ -23,33 +21,33 @@ class JobApplication {
     required this.createdAt,
   });
 
-  // Converts the JSON your FastAPI backend sends into a Dart object
-  factory JobApplication.fromJsontoDartObj(Map<String, dynamic> json) {
+  factory JobApplication.fromJson(Map<String, dynamic> json) {
     return JobApplication(
-      id: json['id'],
-      company: json['company'],
-      roleTitle: json['role_title'],
-      status: json['status'],
+      id: json['id'] ?? '',
+      company: json['company'] ?? '',
+      roleTitle: json['role_title'] ?? '',
+      status: json['status'] ?? 'WISHLIST',
       jobUrl: json['job_url'],
       notes: json['notes'],
       location: json['location'],
       appliedDate: json['applied_date'] != null
-          ? DateTime.parse(json['applied_date'])
+          ? DateTime.tryParse(json['applied_date'])
           : null,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 
-    // Converts a Dart object back into JSON to send TO your backend
-  Map<String,dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'company' : company ,
-      'role_title' : roleTitle ,
-      'status' : status , 
-      'job_url' : jobUrl , 
-      'notes' : notes , 
-      'location' : location , 
-      'applied_date' : appliedDate?.toIso8601String() ,
-    } ; 
+      'company': company,
+      'role_title': roleTitle,
+      'status': status,
+      'job_url': jobUrl?.isEmpty == true ? null : jobUrl,
+      'notes': notes?.isEmpty == true ? null : notes,
+      'location': location?.isEmpty == true ? null : location,
+      'applied_date': appliedDate?.toIso8601String().split('T').first,
+    };
   }
 }

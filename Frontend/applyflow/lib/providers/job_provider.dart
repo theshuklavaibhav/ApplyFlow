@@ -1,9 +1,10 @@
 import '../models/job_application.dart';
 import '../services/job_services.dart';
 import 'package:flutter/material.dart';
+import '../services/job_services.dart';
 
 class JobProvider extends ChangeNotifier {
-  final JobServices _jobService = JobServices();
+  final JobService _jobService = JobService();
 
   List<JobApplication> _jobsList = [];
   bool _isLoading = false;
@@ -58,7 +59,7 @@ class JobProvider extends ChangeNotifier {
 
 
   Future<void> deleteJob(String id) async {
-    await _jobService.deleteApplication(id);
+    await _jobService.deleteJob(id);
     _jobsList.removeWhere((j) => j.id == id);
     notifyListeners();
   }
