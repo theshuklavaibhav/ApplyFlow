@@ -26,7 +26,99 @@ Track every application, interview, and offer in one place. Built with a product
 <br/>
 
 ![ApplyFlow Demo](https://raw.githubusercontent.com/yourusername/applyflow/main/docs/demo.gif)
-> *Replace with a screen recording of your app — even a 10-second GIF dramatically increases recruiter attention*
+# 📸 Screenshots
+
+<div align="center">
+
+## Authentication
+
+<table>
+<tr>
+<td align="center">
+<img src="Media/login.jpeg" width="260"/><br/>
+<b>Login</b>
+</td>
+
+<td align="center">
+<img src="Media/register.jpeg" width="260"/><br/>
+<b>Register</b>
+</td>
+</tr>
+</table>
+
+---
+
+## Dashboard
+
+<table>
+<tr>
+<td align="center">
+<img src="Media/dashboard.jpeg" width="260"/><br/>
+<b>Home Dashboard</b>
+</td>
+
+<td align="center">
+<img src="Media/jobList.jpeg" width="260"/><br/>
+<b>Recent Applications</b>
+</td>
+</tr>
+</table>
+
+---
+
+## Job Management
+
+<table>
+<tr>
+<td align="center">
+<img src="Media/addJob.jpeg" width="260"/><br/>
+<b>Add Application</b>
+</td>
+
+<td align="center">
+<img src="Media/profile.jpeg" width="260"/><br/>
+<b>Achievements & Progress</b>
+</td>
+</tr>
+</table>
+
+---
+
+## Analytics
+
+<table>
+<tr>
+<td align="center">
+<img src="Media/analytics.jpeg" width="260"/><br/>
+<b>Analytics Dashboard</b>
+</td>
+
+<td align="center">
+<img src="Media/profile.jpeg" width="260"/><br/>
+<b>Status Breakdown</b>
+</td>
+</tr>
+</table>
+
+---
+
+## AI Career Copilot
+
+<table>
+<tr>
+<td align="center">
+<img src="Media/aiScreen.jpeg" width="260"/><br/>
+<b>AI Career Copilot</b>
+</td>
+
+<td align="center">
+<img src="Media/upcomingFeatures.jpeg" width="260"/><br/>
+<b>Upcoming AI Features</b>
+</td>
+</tr>
+</table>
+
+</div>
 
 </div>
 
