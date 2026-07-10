@@ -244,80 +244,33 @@ I built this because I was tracking 200+ job applications in a messy spreadsheet
 7. Middleware logs response status and duration
 
 ---
-
 ## Project Structure
-
+ 
 ```
 applyflow/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                 # Run tests + lint on every PR
-│
-├── app/
-│   ├── main.py                    # FastAPI app init, middleware, router registration
-│   ├── config.py                  # Pydantic settings from environment variables
-│   ├── database.py                # SQLAlchemy engine, session factory, Base
-│   │
-│   ├── models/                    # SQLAlchemy ORM models (database tables)
+├── backend/app/                          # FastAPI backend
+│   ├── main.py                   # App, CORS, routers, table creation
+│   ├── config.py                 # Pydantic settings from .env
+│   ├── database.py               # Engine, session, Base
+│   ├── models/
 │   │   ├── user.py
 │   │   └── job_application.py
-│   │
-│   ├── schemas/                   # Pydantic schemas (request/response validation)
-│   │   ├── user.py
-│   │   ├── job_application.py
-│   │   └── common.py              # PaginatedResponse[T], generic wrapper
-│   │
-│   ├── routers/                   # FastAPI route handlers (thin — delegate to services)
-│   │   ├── auth.py
-│   │   ├── jobs.py
-│   │   └── admin.py
-│   │
-│   ├── services/                  # Business logic (validation, orchestration)
-│   │   ├── auth_service.py
-│   │   └── job_service.py
-│   │
-│   ├── repositories/              # Database queries (Repository Pattern)
-│   │   ├── user_repo.py
-│   │   └── job_repo.py
-│   │
-│   ├── core/
-│   │   ├── security.py            # JWT creation/decode, password hashing
-│   │   ├── dependencies.py        # get_current_user, require_admin, get_db
-│   │   ├── exceptions.py          # Custom HTTPException subclasses
-│   │   └── middleware.py          # Request logging, CORS
-│   │
-│   └── cache/
-│       └── redis_client.py        # Redis connection, cache helpers, TTL management
+│   └── core/
+│       └── security.py           # JWT, bcrypt
 │
-├── alembic/
-│   ├── env.py
-│   └── versions/
-│       └── 001_initial_schema.py  # First migration: users + job_applications tables
-│
-├── tests/
-│   ├── conftest.py                # Test DB setup, fixtures: client, test_user, auth_headers
-│   ├── test_auth.py               # Register, login, refresh, logout, /me
-│   ├── test_jobs.py               # CRUD, filtering, pagination, ownership isolation
-│   └── test_admin.py              # Admin-only endpoints, role enforcement
-│
-├── mobile/                        # Flutter application
-│   ├── lib/
-│   │   ├── main.dart
-│   │   ├── models/
-│   │   ├── services/
-│   │   ├── providers/
-│   │   ├── screens/
-│   │   ├── widgets/
-│   │   └── utils/
-│   └── pubspec.yaml
+├── frontend/lib/                   # Flutter app
+│   ├── main.dart                 # App entry, MultiProvider, AuthGate
+│   ├── models/                   # User, JobApplication
+│   ├── services/                 # ApiService, AuthService, JobService
+│   ├── providers/                # AuthProvider, JobProvider
+│   ├── screens/                  # All 7 screens
+│   ├── widgets/                  # Reusable components
+│   └── utils/constants.dart      # Colors, theme, API config
 │
 ├── .env.example
-├── .gitignore
+├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
-├── docker-compose.test.yml
-├── requirements.txt
-├── requirements-dev.txt
 └── README.md
 ```
 
@@ -326,40 +279,33 @@ applyflow/
 ## Database Schema
 
 ```sql
--- Users
 CREATE TABLE users (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email           VARCHAR(255) UNIQUE NOT NULL,
     full_name       VARCHAR(255) NOT NULL,
     hashed_password VARCHAR(255) NOT NULL,
-    role            VARCHAR(20)  NOT NULL DEFAULT 'USER',   -- USER | ADMIN
+    role            VARCHAR(20) NOT NULL DEFAULT 'USER',
     is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at      TIMESTAMPTZ DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ DEFAULT NOW()
+    created_at      TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Job Applications
+ 
 CREATE TABLE job_applications (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     company         VARCHAR(255) NOT NULL,
     role_title      VARCHAR(255) NOT NULL,
-    status          VARCHAR(50)  NOT NULL DEFAULT 'WISHLIST',
-    -- WISHLIST | APPLIED | OA | INTERVIEW | OFFER | REJECTED | WITHDRAWN
+    status          VARCHAR(50) NOT NULL DEFAULT 'WISHLIST',
     job_url         TEXT,
     notes           TEXT,
     location        VARCHAR(255),
-    is_remote       BOOLEAN DEFAULT FALSE,
     applied_date    DATE,
-    follow_up_date  DATE,
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Indexes — added after profiling query patterns
-CREATE INDEX idx_jobs_user_id  ON job_applications(user_id);
-CREATE INDEX idx_jobs_status   ON job_applications(status);
-CREATE INDEX idx_jobs_company  ON job_applications(company);
+ 
+CREATE INDEX idx_jobs_user_id ON job_applications(user_id);
+CREATE INDEX idx_jobs_status  ON job_applications(status);
+CREATE INDEX idx_jobs_company ON job_applications(company);
 ```
 
 **Design decisions:**
