@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/ApplyFlow-v1.0.0-2563EB?style=for-the-badge&labelColor=0F172A" alt="ApplyFlow"/>
+<img src="https://img.shields.io/badge/ApplyFlow-v1.0.2-2563EB?style=for-the-badge&labelColor=0F172A" alt="ApplyFlow"/>
 
 # ApplyFlow
 
