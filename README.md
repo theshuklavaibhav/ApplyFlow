@@ -17,11 +17,11 @@ Track every application, interview, and offer in one place. Built with a product
 
 <br/>
 
-🔗 **Live API** — `https://applyflow.up.railway.app`
+🔗 **Live API** — `https://applyflow-production-2694.up.railway.app/docs`
 &nbsp;&nbsp;|&nbsp;&nbsp;
 📖 **API Docs** — `https://applyflow.up.railway.app/docs`
 &nbsp;&nbsp;|&nbsp;&nbsp;
-📱 **Flutter App** — [`/mobile`](./mobile)
+📱 **Flutter App** — [`Frontend`](./Frontend)
 
 <br/>
 
@@ -202,6 +202,10 @@ I built this because I was tracking 200+ job applications in a messy spreadsheet
 | State Management | Provider | Lightweight, fits the app's complexity level |
 
 ---
+
+## 📦 Download
+
+[![Download APK](https://img.shields.io/badge/Download-APK-success?style=for-the-badge&logo=android)](https://drive.google.com/file/d/1g7oYyvdeApdAo72x0EarYAamGJCOahUS/view?usp=sharing)
 
 ## Architecture
 
