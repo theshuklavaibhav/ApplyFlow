@@ -44,16 +44,13 @@ def send_otp_email(to_email: str, otp: str):
     body = f"""
     <html><body style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
       <h2 style="color:#0553B1">ApplyFlow</h2>
-      <p>Hi,</p>
-      <p>You requested a password reset. Use the OTP below:</p>
+      <p>Your OTP is:</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;
                   color:#0553B1;padding:16px;background:#f0f4ff;
                   border-radius:8px;text-align:center;margin:20px 0">
         {otp}
       </div>
-      <p>This OTP expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
-      <p>If you didn't request this, ignore this email.</p>
-      <p style="color:#888;font-size:12px">— ApplyFlow Team</p>
+      <p>Expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
     </body></html>
     """
     msg = MIMEMultipart("alternative")
@@ -62,7 +59,11 @@ def send_otp_email(to_email: str, otp: str):
     msg["To"]      = to_email
     msg.attach(MIMEText(body, "html"))
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+    # Use port 587 with STARTTLS instead of SSL 465
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=10) as server:
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
         server.login(GMAIL_USER, GMAIL_PASSWORD)
         server.sendmail(GMAIL_USER, to_email, msg.as_string())
 
