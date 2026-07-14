@@ -11,11 +11,13 @@ from app.database import Base, engine, get_db
 from app.models.user import User
 from app.models.job_application import JobApplication
 from app.core.security import hash_password, verify_password, create_access_token, decode_token
+from app.forgot_password import router as forgot_router
 
 # Create all tables on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Job Tracker API")
+app.include_router(forgot_router)
 
 app.add_middleware(
     CORSMiddleware,
