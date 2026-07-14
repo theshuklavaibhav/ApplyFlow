@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
 import 'api_service.dart';
+import 'package:http/http.dart' as http;
+import '../utils/constants.dart';
 
 class AuthService {
   final ApiService _api = ApiService();
@@ -54,5 +56,70 @@ class AuthService {
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: 'access_token');
     return token != null;
+  }
+
+  // ── Send OTP ──────────────────────────────────────────────────────────────
+  static Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final res = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/forgot-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+      final data = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': data['message'] ?? data['detail'],
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Network error. Please try again.'};
+    }
+  }
+
+  // ── Verify OTP ────────────────────────────────────────────────────────────
+  static Future<Map<String, dynamic>> verifyOTP(
+    String email,
+    String otp,
+  ) async {
+    try {
+      final res = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/verify-otp'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'otp': otp}),
+      );
+      final data = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': data['message'] ?? data['detail'],
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Network error. Please try again.'};
+    }
+  }
+
+  // ── Reset Password ────────────────────────────────────────────────────────
+  static Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/reset-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+          'new_password': newPassword,
+        }),
+      );
+      final data = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': data['message'] ?? data['detail'],
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Network error. Please try again.'};
+    }
   }
 }
