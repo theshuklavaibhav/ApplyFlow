@@ -41,51 +41,46 @@ class ResetPasswordRequest(BaseModel):
 def generate_otp() -> str:
     return "".join(random.choices(string.digits, k=6))
 
-
 # def send_otp_email(to_email: str, otp: str):
-#     subject = "ApplyFlow — Your Password Reset OTP"
-#     body = f"""
-#     <html><body style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
-#       <h2 style="color:#0553B1">ApplyFlow</h2>
-#       <p>Your OTP is:</p>
-#       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;
-#                   color:#0553B1;padding:16px;background:#f0f4ff;
-#                   border-radius:8px;text-align:center;margin:20px 0">
-#         {otp}
-#       </div>
-#       <p>Expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
-#     </body></html>
-#     """
-#     msg = MIMEMultipart("alternative")
-#     msg["Subject"] = subject
-#     msg["From"]    = GMAIL_USER
-#     msg["To"]      = to_email
-#     msg.attach(MIMEText(body, "html"))
-
-#     # Use port 587 with STARTTLS instead of SSL 465
-#     with smtplib.SMTP("smtp.gmail.com", 587, timeout=10) as server:
-#         server.ehlo()
-#         server.starttls()
-#         server.ehlo()
-#         server.login(GMAIL_USER, GMAIL_PASSWORD)
-#         server.sendmail(GMAIL_USER, to_email, msg.as_string())
+#     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
+#     message = Mail(
+#         from_email=os.getenv("GMAIL_USER"),
+#         to_emails=to_email,
+#         subject="ApplyFlow — Your Password Reset OTP",
+#         html_content=f"""
+#         <html><body style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
+#           <h2 style="color:#0553B1">ApplyFlow</h2>
+#           <p>Your OTP is:</p>
+#           <div style="font-size:36px;font-weight:bold;letter-spacing:8px;
+#                       color:#0553B1;padding:16px;background:#f0f4ff;
+#                       border-radius:8px;text-align:center;margin:20px 0">
+#             {otp}
+#           </div>
+#           <p>Expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
+#         </body></html>
+#         """
+#     )
+#     sg.send(message)
 
 def send_otp_email(to_email: str, otp: str):
     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
     message = Mail(
-        from_email=os.getenv("GMAIL_USER"),
+        from_email=("ApplyFlow", os.getenv("GMAIL_USER")),
         to_emails=to_email,
-        subject="ApplyFlow — Your Password Reset OTP",
+        subject="Your ApplyFlow verification code",
         html_content=f"""
         <html><body style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
           <h2 style="color:#0553B1">ApplyFlow</h2>
-          <p>Your OTP is:</p>
+          <p>Your verification code is:</p>
           <div style="font-size:36px;font-weight:bold;letter-spacing:8px;
                       color:#0553B1;padding:16px;background:#f0f4ff;
                       border-radius:8px;text-align:center;margin:20px 0">
             {otp}
           </div>
           <p>Expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
+          <p style="color:#888;font-size:11px">
+            You received this because a password reset was requested for your ApplyFlow account.
+          </p>
         </body></html>
         """
     )
