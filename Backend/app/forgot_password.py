@@ -68,8 +68,10 @@ def send_otp_email(to_email: str, otp: str):
     def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)): 
         user = db.query(User).filter(User.email == req.email).first()
 
+        # if not user:
+        #     return {"message": "If this email is registered, an OTP has been sent."}
         if not user:
-            return {"message": "If this email is registered, an OTP has been sent."}
+            raise HTTPException(status_code=404, detail=f"NOT FOUND: '{req.email}'")
 
         existing = db.query(OTPStore).filter(OTPStore.email == req.email).first()
         if existing:
