@@ -64,25 +64,23 @@ def send_otp_email(to_email: str, otp: str):
     )
     sg.send(message)
 
-    @router.post("/forgot-password")
-    def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)): 
-        user = db.query(User).filter(User.email == req.email).first()
+@router.post("/forgot-password")
+def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == req.email).first()
 
-        # if not user:
-        #     return {"message": "If this email is registered, an OTP has been sent."}
-        if not user:
-            raise HTTPException(status_code=404, detail=f"NOT FOUND: '{req.email}'")
+    if not user:
+        raise HTTPException(status_code=404, detail=f"NOT FOUND: '{req.email}'")
 
-        existing = db.query(OTPStore).filter(OTPStore.email == req.email).first()
-        if existing:
-            seconds_since = (datetime.utcnow() - existing.created_at).total_seconds()
-            if seconds_since < 60:
-                raise HTTPException(
-                    status_code=429,
-                    detail=f"Please wait {int(60 - seconds_since)} seconds before requesting a new OTP."
-                )
-            db.delete(existing)
-            db.commit()
+    existing = db.query(OTPStore).filter(OTPStore.email == req.email).first()
+    if existing:
+        seconds_since = (datetime.utcnow() - existing.created_at).total_seconds()
+        if seconds_since < 60:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Please wait {int(60 - seconds_since)} seconds before requesting a new OTP."
+            )
+        db.delete(existing)
+        db.commit()
 
     otp        = generate_otp()
     expires_at = datetime.utcnow() + timedelta(minutes=OTP_EXPIRY_MIN)
