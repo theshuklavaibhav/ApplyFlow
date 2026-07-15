@@ -1,10 +1,8 @@
 import os
 import random
 import string
-import smtplib
+
 from datetime import datetime, timedelta
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
@@ -41,31 +39,11 @@ class ResetPasswordRequest(BaseModel):
 def generate_otp() -> str:
     return "".join(random.choices(string.digits, k=6))
 
-# def send_otp_email(to_email: str, otp: str):
-#     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
-#     message = Mail(
-#         from_email=os.getenv("GMAIL_USER"),
-#         to_emails=to_email,
-#         subject="ApplyFlow — Your Password Reset OTP",
-#         html_content=f"""
-#         <html><body style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
-#           <h2 style="color:#0553B1">ApplyFlow</h2>
-#           <p>Your OTP is:</p>
-#           <div style="font-size:36px;font-weight:bold;letter-spacing:8px;
-#                       color:#0553B1;padding:16px;background:#f0f4ff;
-#                       border-radius:8px;text-align:center;margin:20px 0">
-#             {otp}
-#           </div>
-#           <p>Expires in <strong>{OTP_EXPIRY_MIN} minutes</strong>.</p>
-#         </body></html>
-#         """
-#     )
-#     sg.send(message)
 
 def send_otp_email(to_email: str, otp: str):
     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
     message = Mail(
-        from_email=("ApplyFlow", os.getenv("GMAIL_USER")),
+        from_email=os.getenv("GMAIL_USER"),
         to_emails=to_email,
         subject="Your ApplyFlow verification code",
         html_content=f"""
