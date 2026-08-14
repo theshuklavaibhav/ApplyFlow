@@ -86,7 +86,7 @@ class AppColors {
 // ─── API Config ──────────────────────────────────────────────────
 class ApiConfig {
   // static const baseUrl = 'https://applyflow-production-2694.up.railway.app/api/v1';
-  static const baseUrl = 'https://applyflow-api.onrender.com/api/v1';
+  static const baseUrl = 'https://applyflow-qqje.onrender.com/api/v1';
 }
 
 
