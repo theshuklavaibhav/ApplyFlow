@@ -10,3 +10,4 @@ class OTPStore(Base):
     expires_at  = Column(DateTime, nullable=False)
     is_verified = Column(Boolean, default=False)
     created_at  = Column(DateTime, server_default=func.now())
+    

@@ -125,7 +125,8 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
         .filter(
             OTPStore.email       == req.email,
             OTPStore.otp         == req.otp,
-            OTPStore.is_verified == True,
+            # OTPStore.is_verified == True,
+            OTPStore.is_verified,
         )
         .first()
     )

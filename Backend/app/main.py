@@ -205,8 +205,7 @@
 #      after deploy without hitting a real endpoint with dummy data
 #
 # Everything else is IDENTICAL to your current code — no logic changes.
-
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -222,7 +221,6 @@ from app.models.job_application import JobApplication
 from app.core.security import hash_password, verify_password, create_access_token, decode_token
 from app.forgot_password import router as forgot_router
 
-# Create all tables on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -235,17 +233,11 @@ app = FastAPI(
 
 app.include_router(forgot_router)
 
-# ── CHANGE 1: CORS — lock down from wildcard ─────────────────────────────────
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 if ENVIRONMENT == "production":
-    # Only your Flutter web build and Render URL can call the API
-    # Add your Flutter web deploy URL here when you have one
-    allowed_origins = [
-        "https://applyflow-api.onrender.com",
-    ]
+    allowed_origins = ["https://applyflow-qqje.onrender.com"]
 else:
-    # Local development — allow all origins (safe on localhost)
     allowed_origins = ["*"]
 
 app.add_middleware(
@@ -258,16 +250,17 @@ app.add_middleware(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-# ── Pydantic Schemas ──────────────────────────────────────────────────────────
 
 class RegisterRequest(BaseModel):
     email: EmailStr
     full_name: str
     password: str
 
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 class JobCreateRequest(BaseModel):
     company: str
@@ -278,7 +271,6 @@ class JobCreateRequest(BaseModel):
     location: Optional[str] = None
     applied_date: Optional[date] = None
 
-# ── Dependency: get current user from JWT ─────────────────────────────────────
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -294,7 +286,6 @@ def get_current_user(
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# ── AUTH ROUTES ───────────────────────────────────────────────────────────────
 
 @app.post("/api/v1/auth/register", status_code=201)
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
@@ -310,6 +301,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     db.refresh(user)
     return {"id": str(user.id), "email": user.email, "full_name": user.full_name}
 
+
 @app.post("/api/v1/auth/login")
 def login(req: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == req.email).first()
@@ -318,9 +310,10 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     token = create_access_token({"sub": str(user.id), "role": user.role})
     return {
         "access_token": token,
-        "refresh_token": token,   # placeholder — real refresh tokens in v2
+        "refresh_token": token,
         "token_type": "bearer"
     }
+
 
 @app.get("/api/v1/auth/me")
 def get_me(current_user: User = Depends(get_current_user)):
@@ -331,19 +324,18 @@ def get_me(current_user: User = Depends(get_current_user)):
         "role": current_user.role
     }
 
-# ── JOB ROUTES ────────────────────────────────────────────────────────────────
 
 @app.get("/api/v1/jobs")
 def get_jobs(
-    status: Optional[str] = None,
+    job_status: Optional[str] = None,
     page: int = 1,
     limit: int = 20,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     query = db.query(JobApplication).filter(JobApplication.user_id == current_user.id)
-    if status:
-        query = query.filter(JobApplication.status == status)
+    if job_status:
+        query = query.filter(JobApplication.status == job_status)
     total = query.count()
     jobs = (
         query
@@ -359,6 +351,7 @@ def get_jobs(
         "pages": (total + limit - 1) // limit
     }
 
+
 @app.post("/api/v1/jobs", status_code=201)
 def create_job(
     req: JobCreateRequest,
@@ -370,6 +363,7 @@ def create_job(
     db.commit()
     db.refresh(job)
     return _job_to_dict(job)
+
 
 @app.put("/api/v1/jobs/{job_id}")
 def update_job(
@@ -390,6 +384,7 @@ def update_job(
     db.refresh(job)
     return _job_to_dict(job)
 
+
 @app.delete("/api/v1/jobs/{job_id}", status_code=204)
 def delete_job(
     job_id: str,
@@ -405,29 +400,20 @@ def delete_job(
     db.delete(job)
     db.commit()
 
-# ── CHANGE 2: Health endpoints ────────────────────────────────────────────────
 
 @app.get("/health")
 def health():
-    # Returns environment name so you can confirm Render is running
-    # the right build after deploy
-    return {
-        "status": "ok",
-        "environment": ENVIRONMENT,
-        "version": "1.0.0"
-    }
+    return {"status": "ok", "environment": ENVIRONMENT, "version": "1.0.0"}
+
 
 @app.get("/health/db")
 def health_db(db: Session = Depends(get_db)):
-    # Verify Neon PostgreSQL connection after deploy
-    # Run: curl https://applyflow-api.onrender.com/health/db
     try:
         db.execute(__import__("sqlalchemy").text("SELECT 1"))
         return {"status": "ok", "database": "connected"}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")
 
-# ── Helper ────────────────────────────────────────────────────────────────────
 
 def _job_to_dict(job: JobApplication) -> dict:
     return {
