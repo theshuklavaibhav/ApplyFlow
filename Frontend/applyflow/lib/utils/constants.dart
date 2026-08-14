@@ -85,10 +85,38 @@ class AppColors {
 
 // ─── API Config ──────────────────────────────────────────────────
 class ApiConfig {
-  static const baseUrl = 'https://applyflow-production-2694.up.railway.app/api/v1';
+  // static const baseUrl = 'https://applyflow-production-2694.up.railway.app/api/v1';
+  static const baseUrl = 'https://applyflow-api.onrender.com/api/v1';
 }
 
+
+// ── AFTER (Render) ────────────────────────────────────────────────────────────
+// Replace whichever Railway URL you currently have with this:
+// const String baseUrl = 'https://applyflow-api.onrender.com/api/v1';
+
+// ── Local dev (keep these exactly as they are) ────────────────────────────────
+// Android emulator → host machine
+// const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+
+// iOS simulator → host machine
+// const String baseUrl = 'http://localhost:8000/api/v1';
+
+// Physical device on same WiFi → your machine's local IP
+// const String baseUrl = 'http://192.168.x.x:8000/api/v1';
+
 // ─── Theme ───────────────────────────────────────────────────────
+
+class AppColorsLight {
+  static const bg           = Color(0xFFF8F4FF);
+  static const surface      = Color(0xFFFFFFFF);
+  static const surfaceHigh  = Color(0xFFEDE8FF);
+  static const border       = Color(0xFFD8CCFF);
+  static const textPrimary  = Color(0xFF1A0F2E);
+  static const textSecondary= Color(0xFF5B4F7A);
+  static const textMuted    = Color(0xFF9D8EC7);
+}
+
+
 class AppTheme {
   static ThemeData get dark {
     return ThemeData(
@@ -135,6 +163,60 @@ class AppTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.purple, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData get light {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: AppColorsLight.bg,
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.purple,
+        secondary: AppColors.pink,
+        surface: AppColorsLight.surface,
+        background: AppColorsLight.bg,
+      ),
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(
+        ThemeData.light().textTheme,
+      ).apply(
+        bodyColor: AppColorsLight.textPrimary,
+        displayColor: AppColorsLight.textPrimary,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColorsLight.bg,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColorsLight.textPrimary),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColorsLight.surface,
+        selectedItemColor: AppColors.purple,
+        unselectedItemColor: AppColorsLight.textMuted,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColorsLight.surface,
+        hintStyle: GoogleFonts.plusJakartaSans(
+          color: AppColorsLight.textMuted,
+          fontSize: 14,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColorsLight.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColorsLight.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

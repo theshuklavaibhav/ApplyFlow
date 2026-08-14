@@ -101,29 +101,38 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Widget _otpBox(int index) {
     return SizedBox(
-      width: 46,
-      height: 54,
+      width: 55,
+      height: 56,
       child: TextFormField(
         controller: _ctrl[index],
         focusNode: _focus[index],
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'monospace',
+          ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(
-          counterText: '',
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.07),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
+            counterText: '',
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.15),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFF027DFD), width: 2),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF027DFD), width: 2),
-          ),
-        ),
         onChanged: (v) {
           if (v.isNotEmpty && index < 5) {
             _focus[index + 1].requestFocus();
@@ -204,7 +213,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         )
                       : const Text(
                           'Verify OTP',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600 , color: Colors.white),
                         ),
                 ),
               ),

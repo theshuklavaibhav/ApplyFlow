@@ -1,0 +1,43 @@
+# render.yaml
+# Place at: ApplyFlow/render.yaml  (repo root — already there per screenshot)
+#
+# Render reads this when you connect your repo.
+# All settings pre-fill automatically — no manual clicking needed.
+#
+# ⚠️  This file is committed to git.
+#     NEVER put real secret values here — only key names.
+#     Set actual values in: Render dashboard → your service → Environment tab
+
+services:
+  - type: web
+    name: applyflow-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    branch: main
+    autoDeploy: true
+
+    # Render pings this to verify each deploy succeeded
+    # Your main.py already has GET /health → {"status": "ok"} ✅
+    healthCheckPath: /health
+
+    envVars:
+      # ── PostgreSQL (Neon) ──────────────────────────────────────────────────
+      # Your current .env already has this with sslmode=require ✅
+      # Copy it exactly from your .env into the Render dashboard
+      - key: DATABASE_URL
+        sync: false
+
+      # ── JWT ───────────────────────────────────────────────────────────────
+      # Generate a strong key:
+      #   python -c "import secrets; print(secrets.token_hex(32))"
+      # Do NOT use "ReplaceWithALongRandomSecretKey123456789" in production
+      - key: SECRET_KEY
+        sync: false
+
+      # ── App config ────────────────────────────────────────────────────────
+      - key: ENVIRONMENT
+        value: production
+
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"

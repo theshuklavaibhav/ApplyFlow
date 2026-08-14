@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../providers/auth_provider.dart';
 import '../providers/job_provider.dart';
+import '../providers/theme_provider.dart';
 import '../utils/constants.dart';
 import '../widgets/common_widgets.dart';
 
@@ -361,12 +362,66 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             Text(auth.currentUser?.fullName ?? '', style: AppText.titleLarge),
             Text(auth.currentUser?.email ?? '', style: AppText.bodyMedium),
+            // const SizedBox(height: 24),
+            // GradientButton(
+            //   label: 'Sign out',
+            //   gradient: const LinearGradient(
+            //     colors: [Color(0xFFEF4444), Color(0xFFEC4899)],
+            //   ),
             const SizedBox(height: 24),
+
+            // ── Theme toggle ──────────────────────────────────────
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceHigh,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        themeProvider.themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+                        color: AppColors.purple,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Appearance',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      // 3-option segmented control
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.bg,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _themeOption(context, themeProvider, ThemeMode.light, Icons.light_mode, 'Light'),
+                            _themeOption(context, themeProvider, ThemeMode.system, Icons.phone_android, 'Auto'),
+                            _themeOption(context, themeProvider, ThemeMode.dark, Icons.dark_mode, 'Dark'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+
             GradientButton(
               label: 'Sign out',
-              gradient: const LinearGradient(
-                colors: [Color(0xFFEF4444), Color(0xFFEC4899)],
-              ),
               onTap: () {
                 Navigator.pop(context);
                 auth.logout();
@@ -378,6 +433,37 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _themeOption(BuildContext context, ThemeProvider themeProvider,
+    ThemeMode mode, IconData icon, String label) {
+  final isSelected = themeProvider.themeMode == mode;
+  return GestureDetector(
+    onTap: () => themeProvider.setTheme(mode),
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        gradient: isSelected ? AppColors.purpleGradient : null,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14,
+            color: isSelected ? Colors.white : AppColors.textMuted),
+          const SizedBox(width: 4),
+          Text(label,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? Colors.white : AppColors.textMuted,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }
 
 class _ActionChip extends StatelessWidget {

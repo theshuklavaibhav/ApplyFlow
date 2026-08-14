@@ -44,6 +44,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           builder: (_) => OTPVerificationScreen(email: _emailCtrl.text.trim()),
         ),
       );
+      // Show spam reminder
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.info_outline, color: Colors.white, size: 18),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  "OTP sent! If you don't see it, check your spam folder.",
+                  style: TextStyle(fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          // backgroundColor: const Color(0xFF0553B1),
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
